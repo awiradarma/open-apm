@@ -4,6 +4,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
@@ -21,10 +22,18 @@ public class FrontEndResource {
     @GET
     @Path("/{oid}")
     @Produces({ MediaType.APPLICATION_JSON})
-    public Publisher getPublisher(@PathParam("oid") int id) {
+    public Publisher getPublisher(@PathParam("oid") String name, @QueryParam("delay") Long myDelay, @QueryParam("backendDelay") Long delay) {
+      Long sleepTime = new Long(0);
+      if (myDelay != null) {
+        try {
+          Thread.sleep(myDelay.longValue());
+        } catch (Exception e) {}
+      }
+      if (delay != null) sleepTime = delay;
         return client
           .target(REST_URI)
-          .path(String.valueOf(id))
+          .path(name)
+          .queryParam("delay", sleepTime)
           .request(MediaType.APPLICATION_JSON)
           .get(Publisher.class);
     } 

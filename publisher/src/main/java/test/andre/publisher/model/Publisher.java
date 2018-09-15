@@ -1,26 +1,24 @@
 package test.andre.publisher.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
+@Entity
+//@Table(name = "publishers")
 public class Publisher {
 
-    private int id;
+    @Id
+    @GeneratedValue
+    @Column(name = "publisher_id")
+    private Long id;
+
+    @Column(name = "publisher_name")
     private String name;
-
-    /**
-     * @return the id
-     */
-    public int getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
 
     /**
      * @return the name
@@ -36,8 +34,10 @@ public class Publisher {
         this.name = name;
     }
 
-    public Publisher(int id, String name) {
-        this.id = id;
+    protected Publisher() {    
+    }
+
+    public Publisher(String name) {
         this.name = name;
     }
 }
