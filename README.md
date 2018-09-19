@@ -1,12 +1,24 @@
 # **open-apm**
 Open source APM solutions HOW-TOs
 
+# Overview
+This repo documents installation & configuration steps to utilize a number of open source APM solutions.  
+
+The goal is to eventually cover the following solutions:
+* [Naver Pinpoint](https://naver.github.io/pinpoint/index.html)
+* [Apache Skywalking](http://skywalking.apache.org/)
+* [StageMonitor](http://www.stagemonitor.org/)
+* [Elastic APM](https://www.elastic.co/solutions/apm)
+
+The following diagram shows a topology layout of the reference application (as shown by pinpoint web), showing a *__front__* service API implemented using Spring Boot that invokes an *__author__* service, running on Red Hat EAP 6.4, as well as a *__publisher__* service that's also implemented using Spring Boot. The publisher service interacts with a MySQL database to retrieve its data.
+![pinpoint_web.png](pinpoint_web.png)
 
 ## Steps to build the jars
 * Open the publisher folder (I'm using VS Code)
 * Build the target jar (./mvnw package)
 * The jar should be created in the target folder
 * Repeat for the FrontEndSvc folder
+* Repeat for the author_ee6/author-svc folder
 
 
 ## Setting up MySQL publisherdb instance using Docker
