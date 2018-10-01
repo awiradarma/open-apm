@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -32,7 +33,8 @@ public class PublisherResource {
     @GET
     @Path("/{oid}")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Publisher getPublisherByName(@PathParam("oid") String name, @QueryParam("delay") Long delay) {
+    public Publisher getPublisherByName(@PathParam("oid") String name, @QueryParam("delay") Long delay, @HeaderParam("sw3") String header) {
+        System.out.println("sw3 header: " + header);
         Object obj = repository.getPublisherByName(name);
         try {
         if (delay != null) Thread.sleep(delay.longValue());
