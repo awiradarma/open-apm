@@ -20,6 +20,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.skywalking.apm.toolkit.trace.Trace;
 import org.apache.skywalking.apm.toolkit.trace.TraceContext;
+import org.springframework.web.client.RestTemplate;
 
 import test.andre.model.Author;
 import test.andre.model.Publisher;
@@ -38,35 +39,50 @@ public class FrontEndResource {
     @Path("/publisher/{oid}")
     @Produces({ MediaType.APPLICATION_JSON})
     @Trace(operationName = "getPublisher")
-    public Publisher getPublisher(@PathParam("oid") String name, @QueryParam("delay") Long myDelay, @QueryParam("backendDelay") Long delay) {
+    public Publisher getPublisher(@PathParam("oid") String name, @QueryParam("mode") String mode, @QueryParam("delay") Long myDelay, @QueryParam("backendDelay") Long delay) {
       Long sleepTime = new Long(0);
-      
+      int clientMode = 0;
+
+      if (mode != null && mode.equalsIgnoreCase("springweb")) clientMode = 1;
+      if (mode != null && mode.equalsIgnoreCase("httpclient")) clientMode = 2;
+
       if (myDelay != null) {
         try {
           Thread.sleep(myDelay.longValue());
         } catch (Exception e) {}
       }
       // 1.2343.234234234|1|1|1|#127.0.0.1:8080|#/portal/|#/testEntrySpan|1.2343.234234234
-      String header = TraceContext.traceId()+"|1|1|1|#127.0.0.1:8070|#/front/publisher/"+name+"|#/getPublisher|"+TraceContext.traceId();
-      System.out.println("Trace header: " + header);
+      //String header = TraceContext.traceId()+"|1|1|1|#127.0.0.1:8070|#/front/publisher/"+name+"|#/getPublisher|"+TraceContext.traceId();
+      //System.out.println("Trace header: " + header);
       
       if (delay != null) sleepTime = delay;
 
-      return useApacheClient(REST_URI, name, sleepTime);
-      //  return client
-      //    .target(REST_URI)
-      //    .path(name)
-      //    .queryParam("delay", sleepTime)
-      //    .request(MediaType.APPLICATION_JSON)
-      //    .header("sw3", header)
-      //    .get(Publisher.class);
+      switch (clientMode) {
+        case 1: System.out.println("Invoking publisher using RestTemplate");
+                return useRestTemplate(REST_URI + "/" + name + "?delay=" + sleepTime.toString());
+        case 2: System.out.println("Invoking publisher using Apache HttpClient");
+                return useApacheClient(REST_URI + "/" + name + "?delay=" + sleepTime.toString());
+      }  
+      System.out.println("Invoking publisher using JAX-RS Client Builder (Jersey)");
+      return client
+          .target(REST_URI)
+          .path(name)
+          .queryParam("delay", sleepTime)
+          .request(MediaType.APPLICATION_JSON)
+        //  .header("sw3", header)
+          .get(Publisher.class);
     } 
 
-    public Publisher useApacheClient(String URI, String name, Long delay) {
+    public Publisher useRestTemplate(String URI) {
+      RestTemplate restTemplate = new RestTemplate();
+      return restTemplate.getForObject(URI, Publisher.class);
+    }
+
+    public Publisher useApacheClient(String URI) {
       DefaultHttpClient httpClient = new DefaultHttpClient();
-      String target = URI+"/"+name+"?delay="+delay.toString();
-      System.out.println("Target URI: " + target);
-		  HttpGet getRequest = new HttpGet(target);
+      //String target = URI+"/"+name+"?delay="+delay.toString();
+      //System.out.println("Target URI: " + target);
+		  HttpGet getRequest = new HttpGet(URI);
 		  getRequest.addHeader("accept", "application/json");
       Publisher resp = null;
       try {

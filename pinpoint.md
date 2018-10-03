@@ -1,4 +1,7 @@
-# Pinpoint specific steps
+# Pinpoint 1.7.3
+
+## Findings
+* Does not support Java 9 and above (need to use Pinpoint v1.8.0 and above)
 
 ## Set up HBase for Naver Pinpoint
 * Download and extract HBase 1.4.6
@@ -68,3 +71,7 @@
 * Start the author service, use Java 8
   > <EAP 6.4 home>/bin/standalone.sh
 
+## Screenshots
+
+Example trace output
+![Sample trace output](pinpoint_trace.png)

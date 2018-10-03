@@ -40,8 +40,14 @@ To hit the publisher service and inject a 100ms delay
 To hit the author service directly and inject a 100ms delay: 
 > curl localhost:8180/author-svc/rest/author/Sam?delay=100
 
-To hit the front service and invoke the publisher to obtain a publisher data:  
+To hit the front service and invoke the publisher to obtain a publisher data (using default JAX-RS client builder):  
 > curl localhost:8070/front/publisher/Wrox
+
+To hit the front service and use Spring Web's @RestTemplate to invoke the publisher service:
+> curl localhost:8070/front/publisher/Wrox?mode=springweb
+
+To hit the front service and use Apache HttpClient to invoke the publisher service:
+> curl localhost:8070/front/publisher/Wrox?mode=httpclient
 
 To hit the front service and invoke the author service
 > curl localhost:8070/front/author/Joe
