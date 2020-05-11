@@ -37,12 +37,17 @@ public class PublisherResource {
         System.out.println("sw3 header: " + header);
         Object obj = repository.getPublisherByName(name);
         try {
-        if (delay != null) Thread.sleep(delay.longValue());
+        //if (delay != null) Thread.sleep(delay.longValue());
+        if (delay != null) spin(delay.intValue());
         } catch (Exception e) {}
         if (obj != null) { return (Publisher) obj;} else return null;
     } 
 
-
+   private static void spin(int milliseconds) {
+       long sleepTime = milliseconds*1000000L; // convert to nanoseconds
+       long startTime = System.nanoTime();
+       while ((System.nanoTime() - startTime) < sleepTime) {}
+   }
 
 
 }
